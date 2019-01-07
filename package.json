@@ -1,6 +1,7 @@
 {
   "name": "react-native-algolia-places",
-  "version": "0.0.2",
+  "version": "0.0.3",
+  "homepage": "https://github.com/lucalas/react-native-algolia-places#readme",
   "description": "React Native module to search places using Algolia Places API",
   "main": "./src/index.js",
   "dependencies": {
@@ -20,9 +21,12 @@
     "react": "^16.4.1",
     "react-native": "^0.56.0"
   },
+  "bugs": {
+    "url": "https://github.com/lucalas/react-native-algolia-places/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "#"
+    "url": "git+https://github.com/lucalas/react-native-algolia-places.git"
   },
   "keywords": [
     "AlgoliaPlaces",
