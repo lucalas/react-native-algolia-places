@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import { View, TouchableHighlight } from 'react-native';
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
-import algoliasearch from 'algoliasearch';
-import Highlighter from 'react-native-highlight-words';
+import algoliasearch from 'algoliasearch/reactnative';
 import Search from 'react-native-search-box';
 
 export default class ReactNativeAlgoliaPlaces extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {textSearch: "", search: []};
-        this.onItemClick = this.onItemClick.bind(this);
+        this.state = {textSearch: "", search: null};
 
         this.searchResults = this.searchResults.bind(this);
-
 
         this.places = algoliasearch.initPlaces(this.props.appId, this.props.appKey);
         
@@ -28,7 +25,7 @@ export default class ReactNativeAlgoliaPlaces extends Component {
                     if (err) {
                         self.onSearchError(err);
                     } else {
-                        self.setState({search: res.hits, textSearch: text});
+                        self.setState({search: res, textSearch: text});
                     }
             });
     }
@@ -36,12 +33,6 @@ export default class ReactNativeAlgoliaPlaces extends Component {
     async onSearchError (err) {
         if (this.props.onSearchError) {
             await this.props.onSearchError(err);
-        }
-    }
-
-    async onItemClick (item) {
-        if (this.props.onItemClick) {
-            await this.props.onItemClick(item);
         }
     }
 
@@ -53,26 +44,8 @@ export default class ReactNativeAlgoliaPlaces extends Component {
             onChangeText={this.searchResults}
             />
             {
-                this.state.search.map((item, i) =>
-                    <TouchableHighlight
-                    key={i + "search_result"}
-                    onPress={() => this.onItemClick(item)}>
-                        <View
-                        style={styles.rowStyle}>
-                            <Highlighter
-                            highlightStyle={styles.highlightStyle}
-                            searchWords={this.state.textSearch.split(" ")}
-                            textToHighlight={item.locale_names[0]}
-                            style={styles.locationStyle}
-                            />
-                            <Highlighter
-                            highlightStyle={styles.highlightStyle}
-                            searchWords={this.state.textSearch.split(" ")}
-                            textToHighlight={ "  -  " + (item.city != undefined ? item.city[0] + ", " : "") + (item.administrative != undefined ? item.administrative[0] + ", " : "") + item.country}
-                            style={styles.cityStyle}
-                            />
-                        </View>
-                    </TouchableHighlight>
+                this.state.search && this.state.search.hits.map((item, i) =>
+                    this.props.itemList(item, i, this.state.textSearch)
                 )
             }
             </View>
@@ -82,7 +55,17 @@ export default class ReactNativeAlgoliaPlaces extends Component {
 
 ReactNativeAlgoliaPlaces.defaultProps = {
     language: "en",
-    hitsPerPage: 5
+    hitsPerPage: 5,
+    itemList: (item, i, textSearch) => {
+        return (
+            <View
+                key={i + "search_result"}
+                style={styles.rowStyle}>
+                    <Text style={styles.locationStyle}>{item.locale_names[0]}</Text>
+                    <Text style={styles.cityStyle}>{ "  -  " + (item.city != undefined ? item.city[0] + ", " : "") + (item.administrative != undefined ? item.administrative[0] + ", " : "") + item.country}</Text>
+            </View>
+        );
+    }
 }
 
 ReactNativeAlgoliaPlaces.propTypes = {
@@ -91,8 +74,8 @@ ReactNativeAlgoliaPlaces.propTypes = {
     language: PropTypes.string,
     hitsPerPage: PropTypes.number,
 
-    onItemClick: PropTypes.func,
-    onSearchError: PropTypes.func
+    onSearchError: PropTypes.func,
+    itemList: PropTypes.func
 }
 
 const styles = {

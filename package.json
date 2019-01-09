@@ -7,7 +7,6 @@
   "dependencies": {
     "algoliasearch": "^3.32.0",
     "prop-types": "^15.6.2",
-    "react-native-highlight-words": "^1.0.1",
     "react-native-search-box": "^0.0.19"
   },
   "author": "Luca Taddeo",

@@ -10,11 +10,23 @@ npm i react-native-algolia-places --save
 ```
 
 ## Usage
+### Basic
 ```js
 import ReactNativeAlgoliaPlaces from 'react-native-algolia-places'
 
 render() {
     <ReactNativeAlgoliaPlaces appId={"appId"} appKey={"appKey"} />
+}
+```
+### Render Object
+```js
+import ReactNativeAlgoliaPlaces from 'react-native-algolia-places'
+
+render() {
+    <ReactNativeAlgoliaPlaces appId={"appId"} appKey={"appKey"} 
+      itemList={(item, i, textSearch) => 
+           <Text key={i + "item"}>item.locale_names[0]</Text>
+      }/>
 }
 ```
 
@@ -23,8 +35,11 @@ render() {
 - **appKey** The Places search API key to use
 - **hitsPerPage** Set the number of hits per page
 - **language** Language of the results
-- **onItemClick** When an user click an address
 - **onSearchError** When api request return an error
+- **itemList(item, i, textSearch)** Custom render object for items in list (recommended)
+  - **item** = Item retrieved based on text searched
+  - **i** = Counter of items
+  - **textSearch** = Text searched
 
 
 ## Contributing
