@@ -2,7 +2,7 @@
 ReactNativeAlgoliaPlaces is a module for React Native that helps you to create an address autocompletion based on Algolia Places
 
 ## Demo
-![](https://media.giphy.com/media/7T8SM6PL89ZUZgMteX/giphy.gif)
+![](https://media.giphy.com/media/1it8jEAmVvJmNQFw9U/giphy.gif)
 
 ## Installation
 ```
@@ -33,13 +33,22 @@ render() {
 ## Properties
 - **appId** The Places application ID to use
 - **appKey** The Places search API key to use
-- **hitsPerPage** Set the number of hits per page
-- **language** Language of the results
 - **onSearchError** When api request return an error
 - **itemList(item, i, textSearch)** Custom render object for items in list (recommended)
   - **item** = Item retrieved based on text searched
   - **i** = Counter of items
   - **textSearch** = Text searched
+- **options** (For detail see [Algolia Places Documentation](https://community.algolia.com/places/api-clients.html#search-parameters))
+  - **language**
+  - **countries**
+  - **hitsPerPage**
+  - **type**
+  - **aroundLatLng**
+  - **aroundLatLngViaIP**
+  - **aroundRadius**
+  - **insideBoundingBox**
+  - **insidePolygon**
+  - **getRankingInfo**
 
 
 ## Contributing

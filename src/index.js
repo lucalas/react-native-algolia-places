@@ -14,19 +14,28 @@ export default class ReactNativeAlgoliaPlaces extends Component {
         this.searchResults = this.searchResults.bind(this);
 
         this.places = algoliasearch.initPlaces(this.props.appId, this.props.appKey);
+
+        this.searchResults(this.state.textSearch);
         
     }
 
     searchResults(text) {
-        var self = this;
+          // Create an empty options object to fill
+        var finalOptions = {};
+
+        // If user set options we use them
+        if (this.props.options) {
+            finalOptions = this.props.options;
+        }
+
+        // Add query item to options
+        finalOptions.query = text
+
         this.places
-            .search({query: text, hitsPerPage: self.props.hitsPerPage, language: self.props.language},
-                (err, res) => {
-                    if (err) {
-                        self.onSearchError(err);
-                    } else {
-                        self.setState({search: res, textSearch: text});
-                    }
+            .search(finalOptions).then(res => {
+                this.setState({search: res, textSearch: text});
+            }).catch(err => {
+                this.onSearchError(err);
             });
     }
 
@@ -54,15 +63,13 @@ export default class ReactNativeAlgoliaPlaces extends Component {
 }
 
 ReactNativeAlgoliaPlaces.defaultProps = {
-    language: "en",
-    hitsPerPage: 5,
     itemList: (item, i, textSearch) => {
         return (
             <View
                 key={i + "search_result"}
                 style={styles.rowStyle}>
-                    <Text style={styles.locationStyle}>{item.locale_names[0]}</Text>
-                    <Text style={styles.cityStyle}>{ "  -  " + (item.city != undefined ? item.city[0] + ", " : "") + (item.administrative != undefined ? item.administrative[0] + ", " : "") + item.country}</Text>
+                    <Text style={styles.locationStyle}>{(item.locale_names instanceof Array) ? item.locale_names[0] : item.locale_names.default[0]}</Text>
+                    <Text style={styles.cityStyle}>{ "  -  " + (item.city != undefined ? item.city[0] + ", " : "") + (item.administrative != undefined ? item.administrative[0] + ", " : "") + (typeof item.country === "string" ? item.country : item.country.default) }</Text>
             </View>
         );
     }
@@ -71,8 +78,8 @@ ReactNativeAlgoliaPlaces.defaultProps = {
 ReactNativeAlgoliaPlaces.propTypes = {
     appId: PropTypes.string,
     appKey: PropTypes.string,
-    language: PropTypes.string,
-    hitsPerPage: PropTypes.number,
+    options: PropTypes.object,
+
 
     onSearchError: PropTypes.func,
     itemList: PropTypes.func
@@ -89,9 +96,6 @@ const styles = {
         paddingHorizontal: 4,
         backgroundColor: 'azure',
         borderBottomWidth: 2
-    },
-    highlightStyle: {
-      backgroundColor: "yellow"
     },
     locationStyle: {
         fontSize: 20
